@@ -24,3 +24,13 @@ UI is generated using JetPack Compose UI and ViewModels emitting through StateFl
 
 Dependency inversion is used and dependencies are inject **manually** at the 'edges' of the app, 
 which is in the Application (SchoolApplication class) and the Activity (SchoolActivity class).
+
+# Screenshots
+
+![Screen shot 1](./SS1.png)
+
+![Screen shot 2](./SS2.png)
+
+![Screen shot 3](./SS3.png)
+
+![Screen shot 4](./SS4.png)
