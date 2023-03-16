@@ -116,6 +116,10 @@ fun SchoolScreen(viewModel: SchoolViewModel) {
                         .wrapContentHeight(),
                 )
             }
+
+            is SchoolUi.ErrorUi -> {
+                Text(text = stringResource(ui.message), modifier = Modifier.wrapContentSize())
+            }
         }
     }
 }

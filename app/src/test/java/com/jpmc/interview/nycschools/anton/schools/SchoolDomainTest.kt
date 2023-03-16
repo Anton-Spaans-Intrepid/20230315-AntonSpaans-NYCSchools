@@ -1,5 +1,6 @@
 package com.jpmc.interview.nycschools.anton.schools
 
+import arrow.core.Either.Right
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -19,14 +20,14 @@ class SchoolDomainTest {
     fun `getSchools should return the shools obtained from the SchoolService`() = runTest {
         val results = schoolDomain.getSchools()
 
-        assertEquals(EXPECTED_SCHOOLS, results)
+        assertEquals(Right(EXPECTED_SCHOOLS), results)
     }
 
     @Test
     fun `getAverageScores should return the averages scores of the provided school`() = runTest {
         val results = schoolDomain.getAverageScores(SchoolId("97fdsaj"))
 
-        assertEquals(EXPECTED_SCORES[2], results)
+        assertEquals(Right(EXPECTED_SCORES[2]), results)
     }
 
     companion object {

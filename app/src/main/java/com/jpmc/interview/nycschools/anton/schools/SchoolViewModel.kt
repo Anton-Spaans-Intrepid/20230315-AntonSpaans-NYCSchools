@@ -4,6 +4,9 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import arrow.core.Either
+import arrow.core.continuations.either
+import arrow.core.getOrHandle
 import com.jpmc.interview.nycschools.anton.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -61,42 +64,70 @@ class SchoolViewModel(
     private fun showSchools() {
         viewModelScope.launch {
             delay(3000) // fake a delay in loading data...
-            _schools.value = SchoolUi.SchoolListUi(schools = loadSchools())
+            _schools.value = either {
+                SchoolUi.SchoolListUi(schools = loadSchools().bind())
+            }.getOrHandle(SchoolError::toErrorUi)
         }
     }
 
     /** Causes [schoolUi] to include the average SAT scores. */
     private fun showScores(id: SchoolId, name: String) {
         viewModelScope.launch {
-            _schools.value =
-                SchoolUi.SchoolListUi(schools = loadSchools(), message = R.string.loading_scores)
-            delay(1000) // fake a delay in loading data...
-            _schools.value = loadScores(id, name)
+            _schools.value = either {
+                val schoolList = loadSchools().bind()
+
+                _schools.value = SchoolUi.SchoolListUi(
+                    schools = schoolList,
+                    message = R.string.loading_scores
+                )
+
+                delay(1000) // fake a delay in loading data...
+
+                loadScores(id, name).getOrHandle { error ->
+                    SchoolUi.SchoolListUi(
+                        schools = schoolList,
+                        message = error.getMessage()
+                    )
+                }
+            }.getOrHandle(SchoolError::toErrorUi)
         }
     }
 
     /** Returns a list of [SchoolItemUi], each representing a NYC area school. */
-    private suspend fun loadSchools(): List<SchoolItemUi> {
-        val schools = loadedSchools ?: schoolDomain
-            .getSchools().sortedBy(School::name)
-            .also { loadedSchools = it }
+    private suspend fun loadSchools(): Either<SchoolError, List<SchoolItemUi>> {
+        return either {
+            val schools = loadedSchools ?: schoolDomain.getSchools().bind()
+                .sortedBy(School::name)
+                .also { loadedSchools = it }
 
-        val id = savedState.get<String>(KEY_ID)?.let(::SchoolId)
-        return schools.map { SchoolItemUi(id = it.id, name = it.name, isSelected = it.id == id) }
+            val id = savedState.get<String>(KEY_ID)?.let(::SchoolId)
+            schools.map {
+                SchoolItemUi(
+                    id = it.id,
+                    name = it.name,
+                    isSelected = it.id == id
+                )
+            }
+        }
     }
 
     /** Returns the average SAT scores for the school with the provided [id]. */
-    private suspend fun loadScores(id: SchoolId, name: String): SchoolUi.SchoolWithScoresUi {
-        return schoolDomain.getAverageScores(id).let {
-            SchoolUi.SchoolWithScoresUi(
-                schools = loadSchools(),
-                schoolName = name,
-                scores = AverageScoresUi(
-                    readingScore = ScoreUi(R.string.sat_reading, it.reading),
-                    writingScore = ScoreUi(R.string.sat_writing, it.writing),
-                    mathScore = ScoreUi(R.string.sat_math, it.math),
+    private suspend fun loadScores(
+        id: SchoolId,
+        name: String
+    ): Either<SchoolError, SchoolUi.SchoolWithScoresUi> {
+        return either {
+            schoolDomain.getAverageScores(id).bind().let {
+                SchoolUi.SchoolWithScoresUi(
+                    schools = loadSchools().bind(),
+                    schoolName = name,
+                    scores = AverageScoresUi(
+                        readingScore = ScoreUi(R.string.sat_reading, it.reading),
+                        writingScore = ScoreUi(R.string.sat_writing, it.writing),
+                        mathScore = ScoreUi(R.string.sat_math, it.math),
+                    )
                 )
-            )
+            }
         }
     }
 
@@ -104,6 +135,13 @@ class SchoolViewModel(
         private const val KEY_ID = "id"
         private const val KEY_NAME = "name"
     }
+}
+
+private fun SchoolError.toErrorUi(): SchoolUi.ErrorUi = SchoolUi.ErrorUi(getMessage())
+
+private fun SchoolError.getMessage() = when (this) {
+    is SchoolError.ServiceError -> R.string.service_error
+    else -> R.string.network_error
 }
 
 /**
@@ -170,4 +208,7 @@ sealed class SchoolUi {
         val schoolName: String,
         val scores: AverageScoresUi
     ) : SchoolUi()
+
+    /** State: Show just an error message on the screen. */
+    data class ErrorUi(@StringRes val message: Int = R.string.network_error) : SchoolUi()
 }

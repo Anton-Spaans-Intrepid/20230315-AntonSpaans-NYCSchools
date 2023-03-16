@@ -9,8 +9,6 @@ This has been done:
 - Unit tests for SchoolDomain
 
 To be done:
-- User rail-road programming (Either) to handle errors.
-- Error paths on UI.
 - Add Unit tests for SchoolViewModel
  
 To be done optionally:

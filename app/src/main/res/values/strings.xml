@@ -8,4 +8,6 @@
     <string name="sat_reading">Reading</string>
     <string name="sat_writing">Writing</string>
     <string name="sat_math">Math</string>
+    <string name="network_error">Oops… network issue.\nPlease, make sure your internet is on.</string>
+    <string name="service_error">Oops… something went wrong… sorry.</string>
 </resources>

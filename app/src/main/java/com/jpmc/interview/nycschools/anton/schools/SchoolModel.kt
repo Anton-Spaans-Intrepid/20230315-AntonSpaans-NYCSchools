@@ -1,6 +1,7 @@
 package com.jpmc.interview.nycschools.anton.schools
 
 import com.google.gson.annotations.SerializedName
+import java.io.IOException
 
 /**
  * Represents an id of a School entity.
@@ -51,3 +52,27 @@ data class AverageScores(
     @SerializedName("sat_writing_avg_score")
     val writing: Score,
 )
+
+/** Domain specific Errors that can be produced by this [SchoolDomain]. */
+sealed class SchoolError {
+
+    /** A network error occurred, represented by the exception [t]. */
+    class NetworkError internal constructor(private val t: Throwable) : SchoolError() {
+        override fun toString(): String = "NetworkError: $t"
+    }
+
+    /** A service error, eg 404, parse-exception, unexpected data, etc. */
+    class ServiceError internal constructor(private val t: Throwable?) : SchoolError() {
+        override fun toString(): String = "ServiceError: $t"
+    }
+
+    companion object {
+        /** Returns the appropriate sub-type of [SchoolError] based on the input [t]. */
+        operator fun invoke(t: Throwable? = null): SchoolError {
+            return when (t) {
+                is IOException -> NetworkError(t)
+                else -> ServiceError(t)
+            }
+        }
+    }
+}
