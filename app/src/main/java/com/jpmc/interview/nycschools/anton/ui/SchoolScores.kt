@@ -3,6 +3,7 @@ package com.jpmc.interview.nycschools.anton.ui
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -25,8 +26,9 @@ fun SchoolScores(
 ) {
     Card(
         border = BorderStroke(width = 1.dp, color = Color.LightGray),
+        colors = CardDefaults.elevatedCardColors(),
+        elevation = CardDefaults.elevatedCardElevation(),
     ) {
-
         Column(
             modifier = modifier
                 .padding(horizontal = 12.dp, vertical = 8.dp)

@@ -17,7 +17,7 @@ class SchoolDomainTest {
     private val schoolDomain = SchoolDomain(fakeService)
 
     @Test
-    fun `getSchools should return the shools obtained from the SchoolService`() = runTest {
+    fun `getSchools should return the schools obtained from the SchoolService`() = runTest {
         val results = schoolDomain.getSchools()
 
         assertEquals(Right(EXPECTED_SCHOOLS), results)

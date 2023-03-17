@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.jpmc.interview.nycschools.anton
 
 import android.os.Bundle
@@ -5,17 +7,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -56,69 +55,80 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SchoolScreen(viewModel: SchoolViewModel) {
     val uiState = viewModel.schoolUi.collectAsState()
     val onClickListener = viewModel::onSchoolSelected
+    val selectionScrollState = rememberLazyListState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 4.dp, vertical = 4.dp),
+    Scaffold(
+        topBar = {
+            TopAppBar(title = { Text(text = "SAT Scores") })
+        },
     ) {
-        when (val ui = uiState.value) {
-            is SchoolUi.Loading -> {
-                Loading(labelId = ui.message, modifier = Modifier.fillMaxSize())
-            }
+        Column(
+            modifier = Modifier
+                .padding(it)
+                .padding(8.dp)
+                .fillMaxSize()
+        ) {
+            when (val ui = uiState.value) {
+                is SchoolUi.Loading -> {
+                    Loading(labelId = ui.message, modifier = Modifier.fillMaxSize())
+                }
 
-            is SchoolUi.SchoolListUi -> {
-                SchoolSelection(
-                    labelId = ui.label,
-                    schools = ui.schools,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(fraction = 0.67f),
-                    onSchoolClicked = onClickListener,
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = stringResource(ui.message),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(),
-                    textAlign = TextAlign.Center,
-                )
-            }
+                is SchoolUi.SchoolListUi -> {
+                    SchoolSelection(
+                        labelId = ui.label,
+                        schools = ui.schools,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(fraction = 0.67f),
+                        scrollState = selectionScrollState,
+                        onSchoolClicked = onClickListener,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = stringResource(ui.message),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(),
+                        textAlign = TextAlign.Center,
+                    )
+                }
 
-            is SchoolUi.SchoolWithScoresUi -> {
-                SchoolSelection(
-                    labelId = ui.label,
-                    schools = ui.schools,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(fraction = 0.67f),
-                    onSchoolClicked = onClickListener,
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = stringResource(ui.scoresLabel),
-                    modifier = Modifier
-                        .wrapContentHeight()
-                        .fillMaxWidth(),
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                )
-                SchoolScores(
-                    schoolName = ui.schoolName,
-                    scores = ui.scores,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                )
-            }
+                is SchoolUi.SchoolWithScoresUi -> {
+                    SchoolSelection(
+                        labelId = ui.label,
+                        schools = ui.schools,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(fraction = 0.67f),
+                        scrollState = selectionScrollState,
+                        onSchoolClicked = onClickListener,
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = stringResource(ui.scoresLabel),
+                        modifier = Modifier
+                            .padding(bottom = 4.dp)
+                            .wrapContentHeight()
+                            .fillMaxWidth(),
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                    SchoolScores(
+                        schoolName = ui.schoolName,
+                        scores = ui.scores,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                    )
+                }
 
-            is SchoolUi.ErrorUi -> {
-                Text(text = stringResource(ui.message), modifier = Modifier.wrapContentSize())
+                is SchoolUi.ErrorUi -> {
+                    Text(text = stringResource(ui.message), modifier = Modifier.wrapContentSize())
+                }
             }
         }
     }

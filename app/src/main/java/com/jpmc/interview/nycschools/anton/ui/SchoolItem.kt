@@ -1,12 +1,13 @@
 package com.jpmc.interview.nycschools.anton.ui
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -19,35 +20,31 @@ import com.jpmc.interview.nycschools.anton.ui.theme.Android20230315AntonSpaansNY
  */
 @Composable
 fun SchoolItem(name: String, isSelected: Boolean, modifier: Modifier = Modifier) {
-    Surface(color = Color.Transparent, modifier = modifier) {
-        Card(
-            // Selected school-item has a blue border. Otherwise it has a gray border.
-            border = BorderStroke(
-                1.dp,
-                color = if (isSelected) Color.Blue else Color.LightGray,
-            ),
+    Card(
+        colors = if (isSelected) CardDefaults.elevatedCardColors() else CardDefaults.cardColors(),
+        elevation = if (isSelected) CardDefaults.elevatedCardElevation() else CardDefaults.cardElevation(),
+        modifier = modifier,
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 6.dp, vertical = 4.dp)
+                .height(48.dp),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
+            Icon(
+                painter = painterResource(id = R.drawable.ic_school),
+                contentDescription = "",
+                modifier = Modifier.wrapContentSize(),
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = name,
                 modifier = Modifier
-                    .padding(horizontal = 6.dp, vertical = 4.dp)
-                    .height(48.dp),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_school),
-                    contentDescription = "",
-                    modifier = Modifier.wrapContentSize(),
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = name,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                    maxLines = 2,
-                )
-            }
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                maxLines = 2,
+            )
         }
     }
 }

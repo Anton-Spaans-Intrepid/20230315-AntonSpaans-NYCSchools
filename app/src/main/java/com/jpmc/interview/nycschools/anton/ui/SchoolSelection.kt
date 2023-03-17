@@ -8,15 +8,14 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.jpmc.interview.nycschools.anton.R
 import com.jpmc.interview.nycschools.anton.schools.SchoolId
 import com.jpmc.interview.nycschools.anton.schools.SchoolItemUi
@@ -33,6 +32,7 @@ fun SchoolSelection(
     @StringRes labelId: Int,
     schools: List<SchoolItemUi>,
     modifier: Modifier = Modifier,
+    scrollState: LazyListState = rememberLazyListState(),
     onSchoolClicked: (SchoolItemUi) -> Unit = {}
 ) {
     Column(
@@ -43,13 +43,14 @@ fun SchoolSelection(
         Text(
             text = stringResource(labelId),
             modifier = Modifier
+                .padding(bottom = 4.dp)
                 .wrapContentHeight()
                 .fillMaxWidth(),
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleLarge,
         )
         SchoolList(
             schools = schools,
+            scrollState = scrollState,
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth(),
@@ -61,13 +62,13 @@ fun SchoolSelection(
 @Composable
 private fun SchoolList(
     schools: List<SchoolItemUi>,
+    scrollState: LazyListState,
     modifier: Modifier = Modifier,
-    state: LazyListState = rememberLazyListState(),
-    onSchoolClicked: (SchoolItemUi) -> Unit = {}
+    onSchoolClicked: (SchoolItemUi) -> Unit = {},
 ) {
     LazyColumn(
         modifier = modifier,
-        state = state,
+        state = scrollState,
     ) {
         itemsIndexed(schools) { index, item ->
             if (index != 0) {
