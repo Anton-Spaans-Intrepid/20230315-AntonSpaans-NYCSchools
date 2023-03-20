@@ -66,6 +66,9 @@ sealed class SchoolError {
         override fun toString(): String = "ServiceError: $t"
     }
 
+    /** The scores for the school could not be found. */
+    object ScoresNotFoundError : SchoolError()
+
     companion object {
         /** Returns the appropriate sub-type of [SchoolError] based on the input [t]. */
         operator fun invoke(t: Throwable? = null): SchoolError {

@@ -22,6 +22,6 @@ class SchoolDomain(private val schoolService: SchoolService) {
     suspend fun getAverageScores(id: SchoolId): Either<SchoolError, AverageScores> {
         return Either.catch { schoolService.getSatScores().firstOrNull { it.id == id } }
             .mapLeft { SchoolError(it) }
-            .flatMap { if (it == null) Left(SchoolError()) else Right(it) }
+            .flatMap { if (it == null) Left(SchoolError.ScoresNotFoundError) else Right(it) }
     }
 }

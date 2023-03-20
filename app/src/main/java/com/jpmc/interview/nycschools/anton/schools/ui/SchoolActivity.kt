@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.jpmc.interview.nycschools.anton
+package com.jpmc.interview.nycschools.anton.schools.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.jpmc.interview.nycschools.anton.SchoolApplication
 import com.jpmc.interview.nycschools.anton.schools.SchoolUi
 import com.jpmc.interview.nycschools.anton.schools.SchoolViewModel
 import com.jpmc.interview.nycschools.anton.ui.Loading
@@ -25,7 +26,7 @@ import com.jpmc.interview.nycschools.anton.ui.SchoolScores
 import com.jpmc.interview.nycschools.anton.ui.SchoolSelection
 import com.jpmc.interview.nycschools.anton.ui.theme.Android20230315AntonSpaansNYCSchoolsTheme
 
-class MainActivity : ComponentActivity() {
+class SchoolActivity : ComponentActivity() {
 
     private val viewModel by viewModels<SchoolViewModel> { ViewModelFactory }
 

@@ -141,6 +141,7 @@ private fun SchoolError.toErrorUi(): SchoolUi.ErrorUi = SchoolUi.ErrorUi(getMess
 
 private fun SchoolError.getMessage() = when (this) {
     is SchoolError.ServiceError -> R.string.service_error
+    is SchoolError.ScoresNotFoundError -> R.string.scores_not_found_error
     else -> R.string.network_error
 }
 
