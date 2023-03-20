@@ -25,10 +25,10 @@ which is in the Application (SchoolApplication class) and the Activity (SchoolAc
 
 # Screenshots
 
-![Screen shot 1](./SS1.png)
+![Screen shot 1](./SS1.jpg)
 
-![Screen shot 2](./SS2.png)
+![Screen shot 2](./SS2.jpg)
 
-![Screen shot 3](./SS3.png)
+![Screen shot 3](./SS3.jpg)
 
-![Screen shot 4](./SS4.png)
+![Screen shot 4](./SS4.jpg)
